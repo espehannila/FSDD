@@ -2,6 +2,7 @@
 import nltk
 from gensim.models import Word2Vec
 from stopwords import stopwords
+import datetime
 
 print('Loading Application')
 
@@ -9,22 +10,6 @@ doc1        = "Jokin meni nyt vikaan"
 doc2        = "Ei tämä toiminut ollenkaan oikein"
 doc3        = "Toivottavasti tämä toimisi nyt oikein"
 
-
-# Text Processing
-# Text processing chain
-# 1. tokenization
-# 2. filtering
-# 3. stopwords handling
-# 4. tokenization
-# 5. lemmatization
-# 6. building dictionary
-
-# Parsing
-# Information retrieval (building model, scoring function)
-# Sentiment Analysis
-# Summarization
-# Comparison, discussions with alternatives
-# GUI interface
 
 
 def doc2db(doc):

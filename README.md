@@ -10,6 +10,24 @@
 
 - [Korp.csc](https://korp.csc.fi/)
 
+## Text processing chain
+
+1. Filter
+2. Stopword removal
+3. Tokenization
+4. Lemmatization
+5. Building dictionary
+
+## Target
+
+- Parsing
+- Information retrieval (building model, scoring function)
+- Sentiment Analysis
+- Summarization
+- Comparison, discussions with alternatives
+- GUI interface
+
+
 ## Authors
 
 *Esa Hannila, Oona Kivelä, Tuomas Koivuaho, Santeri Matero, Mauri Miettinen, Tuomas Tuokkola*
