@@ -3,3 +3,8 @@
 /ud-treebanks-v2.3
 /backup
 /data
+/finnpos/lib/thesis_experiments
+/finnpos/lib/src
+/finnpos/lib/Makefile
+/**/Makefile
+/**/License

@@ -1,0 +1,14 @@
+#! /bin/bash
+
+BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+MODEL_DIR=$BIN_DIR/../share/finnpos/ftb_omorfi_model
+OMOR_DIR=$BIN_DIR/../share/finnpos/omorfi
+
+echo "FinnTreeBank tagger (v0.1-alpha-150-g82bce74) using OMorFi and FinnPos" 1>&2
+echo 1>&2
+
+$BIN_DIR/hfst-optimized-lookup $OMOR_DIR/morphology.omor.hfst |
+python3 $BIN_DIR/omorfi2finnpos.py ftb                        |
+python3 $BIN_DIR/finnpos-ratna-feats.py $MODEL_DIR/freq_words |
+$BIN_DIR/finnpos-label $MODEL_DIR/ftb.omorfi.model            |
+python3 $BIN_DIR/finnpos-restore-lemma.py $@
