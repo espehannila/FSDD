@@ -27,6 +27,16 @@
 - Comparison, discussions with alternatives
 - GUI interface
 
+## Tag document
+```shell
+cat tokenized_input | python3 finnpos-ratna-feats.py ../share/finnpos/ftb_omorfi_model/freq_words | ./finnpos-label ../share/finnpos/ftb_omorfi_model/ftb.omorfi.model > tagged_input
+
+
+bash -c "cat tokenized_input | python3 finnpos-ratna-feats.py ../share/finnpos/ftb_omorfi_model/freq_words | ./finnpos-label ../share/finnpos/ftb_omorfi_model/ftb.omorfi.model | python3 postag.py > tagged_input"
+
+bash -c "echo 'Sanomassa' | python3 finnpos-ratna-feats.py ../share/finnpos/ftb_omorfi_model/freq_words | ./finnpos-label ../share/finnpos/ftb_omorfi_model/ftb.omorfi.model | python3 ./postag.py"
+```
+
 
 ## Authors
 

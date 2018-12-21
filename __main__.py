@@ -2,33 +2,74 @@
 import nltk
 from gensim.models import Word2Vec
 from stopwords import stopwords
-import datetime
-
-print('Loading Application')
-
-doc1        = "Jokin meni nyt vikaan"
-doc2        = "Ei tämä toiminut ollenkaan oikein"
-doc3        = "Toivottavasti tämä toimisi nyt oikein"
+from database import db
+from database.word import Word
+from database.document import Document
+from korp.corpora import Corpora
+from korp.query import KorpQuery
 
 
 
-def doc2db(doc):
 
-    # Remove stopwords
-    doc                 = stopwords.remove(doc)
 
-    # Stem document
+def wordTrend():
+
+    query           = KorpQuery(word='magee')
+    corpora         = Corpora(['S24'])
+    res, err        = corpora.count_time(query)
+
+    if err is not None:
+        print('Error occurred', err)
+        exit(1)
+    
+    print(res)
+
+
+
+def coOccurringTrend():
+
+    query           = KorpQuery(co_occurring=['suuri', 'yritys'])
+    corpora         = Corpora(['S24'])
+    res, err        = corpora.count_time(query)
+
+
+    if err is not None:
+        print('Error occurred', err)
+        exit(1)
+
+    print(res)
+
+
+
+def partOfSpeech():
+
+    query           = KorpQuery(word='testi')
+    corpora         = Corpora(['S24'])
+    res, err        = corpora.partOfSpeech(query)
+
+
+    if err is not None:
+        print('Error occurred', err)
+        exit(1)
+
+    [print('\nsentence', sent) for sent in res['res']]
     
 
-    # Tokenize document
-    doc_tokens          = nltk.word_tokenize(doc, language='finnish')
 
+def coOccurrence():
+
+    query           = KorpQuery(word='testi')
+    corpora         = Corpora(['S24'])
+    res, err        = corpora.coOccurrence(query)
+
+
+    if err is not None:
+        print('Error occurred', err)
+        exit(1)
     
+    print(res)
 
-    print(doc_tokens)
-
-
-# Tokenize the documents
-doc2db(doc1)
-doc2db(doc2)
-doc2db(doc3)
+#wordTrend()
+#coOccurringTrend()
+#partOfSpeech()
+#coOccurrence()
