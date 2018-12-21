@@ -2,3 +2,4 @@
 *.pyc
 /ud-treebanks-v2.3
 /backup
+/data
