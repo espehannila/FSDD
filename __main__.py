@@ -69,7 +69,7 @@ def coOccurrence():
     
     print(res)
 
-#wordTrend()
+wordTrend()
 #coOccurringTrend()
 #partOfSpeech()
 #coOccurrence()
