@@ -7,16 +7,16 @@ from database.word import Word
 from database.document import Document
 from korp.corpora import Corpora
 from korp.query import KorpQuery
+from ui.app import app
+bigram_measures = nltk.collocations.BigramAssocMeasures()
 
-
-
-
+app.run_server(debug=True)
 
 def wordTrend():
 
     query           = KorpQuery(word='magee')
     corpora         = Corpora(['S24'])
-    res, err        = corpora.count_time(query)
+    res, err        = corpora.freqDist(query)
 
     if err is not None:
         print('Error occurred', err)
@@ -30,7 +30,7 @@ def coOccurringTrend():
 
     query           = KorpQuery(co_occurring=['suuri', 'yritys'])
     corpora         = Corpora(['S24'])
-    res, err        = corpora.count_time(query)
+    res, err        = corpora.freqDist(query)
 
 
     if err is not None:
@@ -69,7 +69,7 @@ def coOccurrence():
     
     print(res)
 
-wordTrend()
+#wordTrend()
 #coOccurringTrend()
 #partOfSpeech()
 #coOccurrence()

@@ -19,6 +19,7 @@ layout  = html.Div(className='grid',children=[
         coOccurringWordsGraph,
         coOccurringEvolutionGraph
     ]),
+    html.Div(id='intermediate-value')
     #footer
     
    
