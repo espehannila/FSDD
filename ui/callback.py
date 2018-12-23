@@ -69,11 +69,11 @@ class DataParser:
         ]
 
     # Create scatter
-    def Scatter(self, fVal):
+    def Scatter(self, val):
         return go.Scatter(
-            name=fVal['value'],#'%s %s' % (fVal['value'], self.query()),
-            x=[fVal['year']],
-            y=[fVal['count']],
+            name=val['value'],
+            x=[tup[0] for tup in val['absolute']],
+            y=[tup[1] for tup in val['absolute']],
             #marker=dict(
             #    symbol='circle'
             #),
@@ -85,11 +85,9 @@ class DataParser:
         # Get data
         data                = self.data['coOccurrences']
         fDist               = data['fDist']
-        prevWords           = data['words']['prev']
-        print(prevWords)
+        #prevWords           = data['words']['prev']
 
-        scatters            = [ self.Scatter(fVal) for fVal in fDist['words']['prev']]
-        
+        scatters            = [ self.Scatter(word) for word in fDist['words']['prev']]
 
         return scatters
 

@@ -4,6 +4,7 @@ from .query import KorpQuery
 import requests
 import json
 import nltk
+import string
 
 class Sentence:
 
@@ -153,7 +154,7 @@ class Corpora:
             exit(1)
 
         url                 = self.cqpUrl('query', query.toURL())
-        url                 += '&defaultWithin=sentence&show=sentence,pos,lemma&start=0&end=10&indent=2'
+        url                 += '&defaultWithin=sentence&show=sentence,pos,lemma&start=0&end=1000&indent=2'
         url                 += '&show_struct=text_title,text_date,text_time,text_sect,text_sub,text_user,sentence_id,text_urlmsg,text_urlboard'
         print('Loading from %s' % url)
         content             = self.load(url)
@@ -165,34 +166,24 @@ class Corpora:
         return { 'query': query, 'results': corpArr }, None
     
     # Convert tuple array to frequency distribution array
-    def tuple2freqDist(self, arr):
+    def arr2freqDist(self, arr):
+        
+        # Load frequency data
         fDist           = nltk.FreqDist(arr)
 
-        # convert to { value, yearsArr, countsArr }
+        
 
-        # TODO: Fix this code to properly concat values
+        # Create set of unique values
+        values          = set([tup[1].lower() for tup in arr if tup[1] not in string.punctuation])
 
-        '''print(fDist.items())
-
-        seen            = []
-        res             = []
-
-        for tup, count in fDist.items():
-            val         = tup[1]
-            year        = tup[0]
-            indexArr    = [index for index in enumerate(seen) if seen[index] == val]
-            if len(indexArr) > 0:
-                for index in indexArr:
-                    res[index]['years'].append(year)
-                    res[index]['values'].append(val)
-            else:
-                res.append({ 'years': [year], 'value': val, 'counts': [count] })
-                seen.append(val)
-
-        print(res)'''
-
-
-        return [{ 'year': tup[0], 'value': tup[1], 'count': count} for tup, count in nltk.FreqDist(arr).items()]
+        return [{ 
+            'value': value, 
+            'absolute': sorted(
+                [(tup[0], count) for tup, count in fDist.items()
+                    if tup[1] == value],
+                key=lambda x: x[0]
+            )} 
+                for value in values]
 
 
     # Loads co-occurring words from korp.csc.fi
@@ -247,17 +238,24 @@ class Corpora:
             prevPos         += [(year, tag) for tag in prevTags]
             nextPos         += [(year, tag) for tag in nextTags]
 
+
+        prevWordFreqDist    = self.arr2freqDist(prevOcc)
+        nextWordFreqDist    = self.arr2freqDist(nextOcc)
+
+        prevPosFreqDist     = self.arr2freqDist(prevPos)
+        nextPosFreqDist     = self.arr2freqDist(nextPos)
+
         # Sum similar co-occurrences together
         res                 = { 
             'results': {
                 'fDist': {
                     'words': {
-                        'prev': self.tuple2freqDist(prevOcc),
-                        'next': self.tuple2freqDist(nextOcc),
+                        'prev': prevWordFreqDist,
+                        'next': nextWordFreqDist,
                     },
                     'pos': {
-                        'prev': self.tuple2freqDist(prevPos),
-                        'next': self.tuple2freqDist(nextPos)
+                        'prev': prevPosFreqDist,
+                        'next': nextPosFreqDist
                     }
                 },
                 'words': {
