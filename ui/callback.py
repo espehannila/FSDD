@@ -24,7 +24,7 @@ class QueryParser:
         elif self.mode == 'words':
             return KorpQuery(words=self.tokens, qType=self.qType)
 
-        
+
 
 
 
@@ -37,7 +37,7 @@ class DataParser:
     def none2zero(self, val):
         if val is None:
             return 0
-        return val        
+        return val
 
     def query(self):
         return self.data['query']
@@ -48,7 +48,7 @@ class DataParser:
         freqDist            = self.data['freqDist']
         absolute            = freqDist['absolute']
 
-        # Convert dict to 
+        # Convert dict to
         xy                  = [(key, self.none2zero(absolute[key])) for key in absolute if key != '']
 
         # Sort frequency data
@@ -59,7 +59,7 @@ class DataParser:
         y                   = [tup[1] for tup in xy]
 
         # Return chart data
-        return [ 
+        return [
             go.Scatter(
                 x=x,
                 y=y,
@@ -86,14 +86,39 @@ class DataParser:
         data                = self.data['coOccurrences']
         fDist               = data['fDist']
         #prevWords           = data['words']['prev']
+        p = CoWordParser()
+        for word in fDist['words']['prev']:
+            p.add(self.Scatter(word))
 
-        scatters            = [ self.Scatter(word) for word in fDist['words']['prev']]
 
+        # scatters            = [ self.Scatter(word) for word in fDist['words']['prev']]
+        scatters = p.scatters
         return scatters
 
-
-
-
+class CoWordParser(object):
+    def __init__(self, counts=5):
+        self.scatters = []
+        self.appearances = []
+        self.min = 0
+        self.counts = counts
+    def add(self,scatter):
+        appearance = sum(scatter.y)
+        if len(self.scatters) < self.counts:
+            self.scatters.append(scatter)
+            self.appearances.append(appearance)
+            self.min = min(self.appearances)
+            return
+        if appearance > self.min:
+            i = self.appearances.index(self.min)
+            self.scatters.pop(i)
+            self.appearances.pop(i)
+            self.scatters.append(scatter)
+            self.appearances.append(appearance)
+            self.min = min(self.appearances)
+            return
+        if  len(self.scatters) > self.counts:
+            print('bug')
+            
 def init(app):
     print('Initializing application functionalities')
 
@@ -180,11 +205,11 @@ def init(app):
         print('Query', query.toURL())
 
         freqRes, err        = corpora.freqDist(query)
-        
+
         if err is not None:
             print('Error occurred', err)
-            return str({ 
-                'query': query.toString(), 
+            return str({
+                'query': query.toString(),
                 'freqDist': None,
                 'coOccurrence': None
             })
@@ -197,4 +222,3 @@ def init(app):
             'freqDist': freqRes['results'],
             'coOccurrences': coRes['results']
         })
-        
