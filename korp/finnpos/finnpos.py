@@ -4,7 +4,7 @@ import subprocess
 import nltk
 from .tag import Tag
 
-FINNPOS_FOLDER          = './finnpos/lib'
+FINNPOS_FOLDER          = './korp/finnpos/lib'
 BIN_FOLDER              = '{0}/bin'.format(FINNPOS_FOLDER)
 FTB_LABEL               = '{0}/ftb-label'.format(BIN_FOLDER)
 #MODEL_FOLDER            = '{0}/share/finnpos/ftb_omorfi_model'.format(FINNPOS_FOLDER)
@@ -53,4 +53,7 @@ def partOfSpeech(text):
 
     #return [Tag.fromString(tag) for tag in io.StringIO(output.split('\n'))]
     
-    
+def lemmatize(arr):
+    print('Lemmatizing array', arr)
+    print(partOfSpeech(' '.join(arr)))
+    return arr

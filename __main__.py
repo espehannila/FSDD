@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import nltk
 from gensim.models import Word2Vec
-from stopwords import stopwords
+from korp.stopwords import stopwords
 from database import db
 from database.word import Word
 from database.document import Document

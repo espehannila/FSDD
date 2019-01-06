@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from .config import *
 from .query import KorpQuery
+from .stopwords import stopwords
+from .finnpos import finnpos
 import requests
 import json
 import nltk
 import string
+import numpy as np
 
 class Sentence:
 
@@ -45,6 +48,9 @@ class Sentence:
     def getTokensByWords(self, words):
         return [self.tokens[index] for index in self.queryIndexes(words)]
 
+    def getLemmasByWords(self, words):
+        return [self.getLemmas()[index] for index in self.queryIndexes(words)]
+
     def getPosByWords(self, words):
         return [self.getPosTags()[index] for index in self.queryIndexes(words)]
 
@@ -55,10 +61,11 @@ class Sentence:
         return [bigram for bigram in self.bigrams() if self.queryWord == bigram[0]]
 
     def prevOccurrenceWords(self):
-        return [bigram[0] for bigram in self.prevBigrams()]
+        return [bigram[0] for bigram in self.prevBigrams() if bigram[0] not in string.punctuation]
 
     def mextOccurrenceWords(self):
-        return [bigram[1] for bigram in self.nextBigrams()]
+        return [bigram[1] for bigram in self.nextBigrams() if bigram[1] not in string.punctuation]
+
 
     def year(self):
         dateArr         = self.date.split('.')
@@ -68,6 +75,13 @@ class Sentence:
             return dateArr[1]
         elif len(dateArr) == 3:
             return dateArr[2]
+
+
+    def wordsLemmasArr(self, words, lemmas):
+        npWords             = np.array(words)
+        npLemmas            = np.array(lemmas)
+
+        return np.array((npWords, npLemmas))
         
     # Returns nearby words
     def nearbyData(self):
@@ -75,10 +89,28 @@ class Sentence:
         # Find next and prev words from query word
         prevWords           = self.prevOccurrenceWords()
         nextWords           = self.mextOccurrenceWords()
+
+        # Retrieve lemmas of co-occurring words
+        prevLemmas          = self.getLemmasByWords(prevWords)
+        nextLemmas          = self.getLemmasByWords(nextWords)
+
+        # Concat arrays to tuple array
+        prevWordsLemmas     = self.wordsLemmasArr(prevWords, prevLemmas)
+        nextWordsLemmas     = self.wordsLemmasArr(nextWords, nextLemmas)
+
+        # Remove stopwords according to the lemma
+        prevWords           = [tup[0] for tup in prevWordsLemmas if len(tup) > 1 and tup[1] not in stopwords.stopWords()]
+        nextWords           = [tup[0] for tup in nextWordsLemmas if len(tup) > 1 and tup[1] not in stopwords.stopWords()]
+
+        # Remove stop words
+        prevWords           = stopwords.remove(prevWords)
+        nextWords           = stopwords.remove(nextWords)
         
+        # Get word tokens
         prevTokens          = self.getTokensByWords(prevWords)
         nextTokens          = self.getTokensByWords(nextWords)
 
+        # Get word part-of-speech tags
         prevPos             = self.getPosByWords(prevWords)
         nextPos             = self.getPosByWords(nextWords)        
 

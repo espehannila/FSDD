@@ -170,7 +170,7 @@ def init(app):
         return go.Figure(
             layout=dict(
                 title='Co-Occurring words',
-                showlegend=False,
+                showlegend=True,
                 legend=go.layout.Legend(
                     x=0,
                     y=1.0

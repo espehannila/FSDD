@@ -3,7 +3,7 @@ from bson.objectid import ObjectId
 from .word import Word
 from . import db
 from .db_object import DbObject
-from finnpos import finnpos
+from korp.finnpos import finnpos
 #from finnpos.bin import omorfi2finnpos as finnpos
 #import finnpos
 
