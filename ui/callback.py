@@ -80,7 +80,24 @@ class DataParser:
             mode='lines+markers'
         )
 
-    def coWordData(self):
+    def nextCoWordData(self):
+
+        # Get data
+        data                = self.data['coOccurrences']
+        fDist               = data['fDist']
+        #prevWords           = data['words']['prev']
+        p = CoWordParser()
+        for word in fDist['words']['next']:
+            p.add(self.Scatter(word))
+
+
+        # scatters            = [ self.Scatter(word) for word in fDist['words']['prev']]
+        scatters = p.scatters
+        return scatters
+
+
+
+    def prevCoWordData(self):
 
         # Get data
         data                = self.data['coOccurrences']
@@ -152,24 +169,24 @@ def init(app):
 
 
     @app.callback(
-        Output('co-occurring-words', 'figure'),
+        Output('prev-co-occurring-words', 'figure'),
         [Input('intermediate-value', 'children')]
     )
-    def updateCoOccurringWords(data_str):
+    def updatePrevCoOccurringWords(data_str):
 
         if data_str is None:
-            return go.Figure(layout=dict(title='Co-Occurring words'))
+            return go.Figure(layout=dict(title='Top5 of previous co-occurring words'))
 
         # Create data parser
         parser              = DataParser(data_str)
 
         print('Parsing co occurring data')
-        data                = parser.coWordData()
+        data                = parser.prevCoWordData()
         print('Parsed co occurring data')
 
         return go.Figure(
             layout=dict(
-                title='Co-Occurring words',
+                title='Top 5 of previous co-occurring words',
                 showlegend=True,
                 legend=go.layout.Legend(
                     x=0,
@@ -180,6 +197,36 @@ def init(app):
             data=data
         )
 
+
+
+    @app.callback(
+        Output('next-co-occurring-words', 'figure'),
+        [Input('intermediate-value', 'children')]
+    )
+    def updateNextCoOccurringWords(data_str):
+
+        if data_str is None:
+            return go.Figure(layout=dict(title='Top5 of next co-occurring words'))
+
+        # Create data parser
+        parser              = DataParser(data_str)
+
+        print('Parsing co occurring data')
+        data                = parser.nextCoWordData()
+        print('Parsed co occurring data')
+
+        return go.Figure(
+            layout=dict(
+                title='Top 5 of next co-occurring words',
+                showlegend=True,
+                legend=go.layout.Legend(
+                    x=0,
+                    y=1.0
+                ),
+                margin=go.layout.Margin(l=40, r=0, t=40, b=30)
+            ),
+            data=data
+        )
 
 
 
