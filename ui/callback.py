@@ -7,6 +7,7 @@ import plotly.graph_objs as go
 import nltk
 from korp.corpora import Corpora
 from korp.query import KorpQuery
+from collections import Counter
 
 
 class QueryParser:
@@ -84,7 +85,7 @@ class DataParser:
 
     # Return sum of the total appearance of the word
     def totalAppearance(self):
-        return sum([row['count'] for row in self.freqToTable()])
+        return sum(row['count'] for row in self.freqToTable())
 
 
     def coOccurrenceToTable(self):
@@ -97,17 +98,28 @@ class DataParser:
 
         for words in [fDist['words']['prev'], fDist['words']['next']]:
             for word in words:
-                print(word)
                 value       = word['value']
                 #year        = word['absolute'][0]
                 count       = sum(set([tup[1] for tup in word['absolute']]))
 
                 table.append({ 'word': value, 'count': count })
 
-        table.sort(key=lambda word: word['count'], reverse=True)
+        # Create set of unique words
+        words               = set([word['word'].lower() for word in table])
+
+        totalCount          = self.totalAppearance()
+
+        res                 = []
+
+        # Sum word counts
+        for word in words:
+            count           = sum(dic['count'] for dic in table if dic['word'].lower() == word.lower())
+            res.append({ 'word': word, 'count': count, 'percent': count / totalCount * 100 })
+
+        res.sort(key=lambda word: word['count'], reverse=True)
         
 
-        return table
+        return res
 
     def contextEvolutionData(self):
         # Get data
@@ -278,9 +290,7 @@ def init(app):
         # Create data parser
         parser              = DataParser(data_str)
 
-        print('Parsing co occurring data')
         data                = parser.prevCoWordData()
-        print('Parsed co occurring data')
 
         return go.Figure(
             layout=dict(
@@ -309,9 +319,7 @@ def init(app):
         # Create data parser
         parser              = DataParser(data_str)
 
-        print('Parsing co occurring data')
         data                = parser.nextCoWordData()
-        print('Parsed co occurring data')
 
         return go.Figure(
             layout=dict(

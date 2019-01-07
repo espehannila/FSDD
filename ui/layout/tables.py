@@ -30,7 +30,8 @@ totalCoOccurrence = html.Div(children=[
         id='co-occurring-word-appearance-table',
         columns=[
             { 'name': 'Word', 'id': 'word' },
-            { 'name': 'Count', 'id': 'count' }
+            { 'name': 'Count', 'id': 'count' },
+            { 'name': '% of appearance', 'id': 'percent' }
         ],
         style_cell={
             'padding': '5px',
