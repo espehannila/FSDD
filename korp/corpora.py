@@ -85,7 +85,7 @@ class Sentence:
 
     # List of unwanted "tokens"
     def multiCommEmojis(self):
-        return ['..', '...', '....', '.....', '!!', '!!!', ':)', ':(', '(:', '):']
+        return ['..', '...', '....', '.....', '!!', '!!!', ':)', ':(', '(:', '):', ':-)', '(-:', '(=', '=)']
         
     # Returns nearby words
     def nearbyData(self):

@@ -48,7 +48,7 @@ class DataParser:
         freqDist            = self.data['freqDist']
         absolute            = freqDist['absolute']
 
-        # Convert dict to
+        # Convert dict to xy tuples
         xy                  = [(key, self.none2zero(absolute[key])) for key in absolute if key != '']
 
         # Sort frequency data
@@ -60,13 +60,50 @@ class DataParser:
 
         # Return chart data
         return [
-            go.Scatter(
+            go.Bar(
                 x=x,
                 y=y,
-                name=self.query(),
-                mode='lines+markers'
+                name=self.query()
             )
         ]
+
+        
+    def freqToTable(self):
+
+        # Get data
+        freqDist            = self.data['freqDist']
+        absolute            = freqDist['absolute']
+
+        # Convert dict to xy tuples
+        xy                  = [(key, self.none2zero(absolute[key])) for key in absolute if key != '']
+
+        # Sort frequency data by the occurrence
+        xy.sort(key=lambda tup: tup[1], reverse=True)
+
+        return [{ 'year': tup[0], 'count': tup[1] } for tup in xy]
+
+    def coOccurrenceToTable(self):
+
+        # Get data
+        data                = self.data['coOccurrences']
+        fDist               = data['fDist']
+
+        table               = []
+
+        for words in [fDist['words']['prev'], fDist['words']['next']]:
+            for word in words:
+                print(word)
+                value       = word['value']
+                #year        = word['absolute'][0]
+                count       = sum(set([tup[1] for tup in word['absolute']]))
+
+                table.append({ 'word': value, 'count': count })
+
+        table.sort(key=lambda word: word['count'], reverse=True)
+        
+
+        return table
+
 
     # Create scatter
     def Scatter(self, val):
@@ -85,7 +122,7 @@ class DataParser:
         # Get data
         data                = self.data['coOccurrences']
         fDist               = data['fDist']
-        #prevWords           = data['words']['prev']
+        
         p = CoWordParser()
         for word in fDist['words']['next']:
             p.add(self.Scatter(word))
@@ -102,7 +139,7 @@ class DataParser:
         # Get data
         data                = self.data['coOccurrences']
         fDist               = data['fDist']
-        #prevWords           = data['words']['prev']
+        
         p = CoWordParser()
         for word in fDist['words']['prev']:
             p.add(self.Scatter(word))
@@ -112,19 +149,26 @@ class DataParser:
         scatters = p.scatters
         return scatters
 
+
+
 class CoWordParser(object):
+
     def __init__(self, counts=5):
         self.scatters = []
         self.appearances = []
         self.min = 0
         self.counts = counts
+
     def add(self,scatter):
+
         appearance = sum(scatter.y)
+
         if len(self.scatters) < self.counts:
             self.scatters.append(scatter)
             self.appearances.append(appearance)
             self.min = min(self.appearances)
             return
+
         if appearance > self.min:
             i = self.appearances.index(self.min)
             self.scatters.pop(i)
@@ -133,8 +177,10 @@ class CoWordParser(object):
             self.appearances.append(appearance)
             self.min = min(self.appearances)
             return
+
         if  len(self.scatters) > self.counts:
             print('bug')
+
             
 def init(app):
     print('Initializing application functionalities')
@@ -227,6 +273,40 @@ def init(app):
             ),
             data=data
         )
+
+
+
+
+    @app.callback(
+        Output('word-appearance-table', 'data'),
+        [Input('intermediate-value', 'children')]
+    )
+    def update_table(data_str):
+
+        if data_str is None:
+            return []
+
+        # Create data parser
+        parser              = DataParser(data_str)
+
+        return parser.freqToTable()
+
+
+
+    @app.callback(
+        Output('co-occurring-word-appearance-table', 'data'),
+        [Input('intermediate-value', 'children')]
+    )
+    def update_co_occurring_table(data_str):
+
+        if data_str is None:
+            return []
+
+        # Create data parser
+        parser              = DataParser(data_str)
+
+        return parser.coOccurrenceToTable()
+
 
 
 

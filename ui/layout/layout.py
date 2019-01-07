@@ -6,7 +6,7 @@ from .freq_dist import freqGraph
 from .context_evolution import contextGraph
 from .co_occurring_words import coOccurringWordsGraph, nextCoOccurringWordsGraph
 from .co_occurring_evolution import coOccurringEvolutionGraph
-
+from .tables import summary, totalCoOccurrence
 
 layout  = html.Div(className='grid',children=[
     html.Div(className='row',children=[
@@ -19,6 +19,11 @@ layout  = html.Div(className='grid',children=[
         coOccurringWordsGraph,
         nextCoOccurringWordsGraph,
         coOccurringEvolutionGraph
+    ]),
+    
+    html.Div(className='row',children=[
+        summary,
+        totalCoOccurrence
     ]),
     html.Div(id='intermediate-value')
     #footer
