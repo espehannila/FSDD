@@ -82,6 +82,11 @@ class DataParser:
 
         return [{ 'year': tup[0], 'count': tup[1] } for tup in xy]
 
+    # Return sum of the total appearance of the word
+    def totalAppearance(self):
+        return sum([row['count'] for row in self.freqToTable()])
+
+
     def coOccurrenceToTable(self):
 
         # Get data
@@ -356,6 +361,20 @@ def init(app):
 
 
 
+    @app.callback(
+        Output('total-appearance', 'children'),
+        [Input('intermediate-value', 'children')]
+    )
+    def totalCountOfAppearance(data_str):
+
+        if data_str is None:
+            return '0'
+
+        # Create data parser
+        parser              = DataParser(data_str)
+
+        return parser.totalAppearance()
+        
 
 
 

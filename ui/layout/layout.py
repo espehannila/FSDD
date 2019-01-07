@@ -22,6 +22,13 @@ layout  = html.Div(className='grid',children=[
     ]),
     
     html.Div(className='row',children=[
+        html.Div(className='row',children=[
+            html.H6('Total appearance'),
+            html.H6(id='total-appearance')
+        ])
+    ]),
+    
+    html.Div(className='row',children=[
         summary,
         totalCoOccurrence
     ]),
