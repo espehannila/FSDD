@@ -68,6 +68,28 @@ class DataParser:
             )
         ]
 
+    def contextEvolutionData(self):
+        # Get data
+        data                = self.data['sentenceLengths']
+        xy= []
+        for i in data:
+            xy.append((i, data[i]))
+        xy.sort()
+
+        # Load x and y arrays
+        x                   = [tup[0] for tup in xy]
+        y                   = [tup[1] for tup in xy]
+
+        # Return chart data
+        return [
+            go.Scatter(
+                x=x,
+                y=y,
+                name="Sentence length",
+                mode='lines+markers'
+            )
+        ]
+
     # Create scatter
     def Scatter(self, val):
         return go.Scatter(
@@ -151,6 +173,32 @@ def init(app):
         )
 
 
+
+    @app.callback(
+        Output('context-evolution', 'figure'),
+        [Input('intermediate-value', 'children')]
+    )
+    def updateContextEvolution(data_str):
+
+        if data_str is None:
+            return go.Figure(layout=dict(title='Context evolution'))
+
+        # Create data parser
+        parser              = DataParser(data_str)
+
+        return go.Figure(
+            layout=dict(
+                title='Context evolution',
+                showlegend=True,
+                legend=go.layout.Legend(
+                    x=0,
+                    y=1.0
+                ),
+                margin=go.layout.Margin(l=40, r=0, t=40, b=30)
+            ),
+            data=parser.contextEvolutionData()
+        )
+
     @app.callback(
         Output('co-occurring-words', 'figure'),
         [Input('intermediate-value', 'children')]
@@ -215,10 +263,11 @@ def init(app):
             })
 
 
-        coRes, err          = corpora.coOccurrence(query)
+        coRes, lengthRes, err          = corpora.coOccurrence(query)
 
         return str({
             'query': query.toString(),
             'freqDist': freqRes['results'],
-            'coOccurrences': coRes['results']
+            'coOccurrences': coRes['results'],
+            'sentenceLengths': lengthRes,
         })
