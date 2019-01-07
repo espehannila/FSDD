@@ -55,7 +55,16 @@ header  = html.Header([
         html.P(className='light-gray bold small-caps', children='Powered by:'),
         html.A(className='blue',children='korp.csc.fi',href='http://korp.csc.fi',target='_blank'),
         html.A(className='blue',children='nltk.org',href='http://nltk.org',target='_blank'),
+    ]),
+    
+    html.Div(className='divider'),
+    html.Div(className='row',children=[
+        html.P('Total appearance'),
+        html.P(id='total-appearance')
+    ]),
+    html.Div(className='row',children=[
+        html.P('Average sentence length'),
+        html.P(id='mean-sentence-length')
     ])
     
-    # Finnish Slang. Dynamic Distribution')
 ])

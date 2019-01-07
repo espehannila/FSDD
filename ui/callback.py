@@ -114,7 +114,7 @@ class DataParser:
         # Sum word counts
         for word in words:
             count           = sum(dic['count'] for dic in table if dic['word'].lower() == word.lower())
-            res.append({ 'word': word, 'count': count, 'percent': count / totalCount * 100 })
+            res.append({ 'word': word, 'count': count, 'percent': count / totalCount * 100 / 2 })
 
         res.sort(key=lambda word: word['count'], reverse=True)
         
@@ -142,6 +142,21 @@ class DataParser:
                 mode='lines+markers'
             )
         ]
+
+    def meanSentenceLength(self):
+        # Get data
+        data                = self.data['sentenceLengths']
+
+        print(data)
+
+        lengthSum           = sum(data[year] for year in data)
+        numOfCounts         = len(data)
+
+        if numOfCounts == 0:
+            return 0
+
+
+        return lengthSum/numOfCounts
 
     # Create scatter
     def Scatter(self, val):
@@ -253,6 +268,9 @@ def init(app):
 
 
 
+
+
+
     @app.callback(
         Output('context-evolution', 'figure'),
         [Input('intermediate-value', 'children')]
@@ -277,6 +295,26 @@ def init(app):
             ),
             data=parser.contextEvolutionData()
         )
+
+        
+    @app.callback(
+        Output('mean-sentence-length', 'children'),
+        [Input('intermediate-value', 'children')]
+    )
+    def meanSentenceLength(data_str):
+
+        if data_str is None:
+            return '0'
+
+        # Create data parser
+        parser              = DataParser(data_str)
+
+        return parser.meanSentenceLength()
+
+
+
+
+
 
     @app.callback(
         Output('prev-co-occurring-words', 'figure'),
@@ -383,6 +421,8 @@ def init(app):
 
         return parser.totalAppearance()
         
+
+
 
 
 

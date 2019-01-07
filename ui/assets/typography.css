@@ -60,3 +60,6 @@ h3 {
     padding: 8px;
 }
 
+table {
+    user-select: all;
+}

@@ -17,15 +17,8 @@ layout  = html.Div(className='grid',children=[
     html.Div(className='row',children=[
         contextGraph,
         coOccurringWordsGraph,
-        nextCoOccurringWordsGraph,
-        coOccurringEvolutionGraph
-    ]),
-    
-    html.Div(className='row',children=[
-        html.Div(className='row',children=[
-            html.H6('Total appearance'),
-            html.H6(id='total-appearance')
-        ])
+        nextCoOccurringWordsGraph
+        #coOccurringEvolutionGraph
     ]),
     
     html.Div(className='row',children=[
