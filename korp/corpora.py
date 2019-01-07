@@ -101,6 +101,10 @@ class Sentence:
         npLemmas            = np.array(lemmas)
 
         return np.array((npWords, npLemmas))
+
+    # List of unwanted "tokens"
+    def multiCommEmojis(self):
+        return ['..', '...', '....', '.....', '!!', '!!!', ':)', ':(', '(:', '):']
         
     # Returns nearby words
     def nearbyData(self):
@@ -120,6 +124,10 @@ class Sentence:
         # Remove stopwords according to the lemma
         prevWords           = [tup[0] for tup in prevWordsLemmas if len(tup) > 1 and tup[1] not in stopwords.stopWords()]
         nextWords           = [tup[0] for tup in nextWordsLemmas if len(tup) > 1 and tup[1] not in stopwords.stopWords()]
+
+        # Remove multicommas and emojies
+        prevWords           = [word for word in prevWords if word not in self.multiCommEmojis()]
+        nextWords           = [word for word in nextWords if word not in self.multiCommEmojis()]
 
         # Remove stop words
         prevWords           = stopwords.remove(prevWords)
