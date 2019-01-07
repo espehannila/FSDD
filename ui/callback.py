@@ -67,7 +67,6 @@ class DataParser:
             )
         ]
 
-<<<<<<< HEAD
         
     def freqToTable(self):
 
@@ -105,7 +104,6 @@ class DataParser:
 
         return table
 
-=======
     def contextEvolutionData(self):
         # Get data
         data                = self.data['sentenceLengths']
@@ -127,7 +125,6 @@ class DataParser:
                 mode='lines+markers'
             )
         ]
->>>>>>> a6374249514b9492bbd2b17d7603d8564dfa5dbf
 
     # Create scatter
     def Scatter(self, val):
