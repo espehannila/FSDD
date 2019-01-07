@@ -34,7 +34,26 @@ class Sentence:
     def getPosTags(self):
         return [token['pos'] for token in self.tokens]
 
-
+    # Calculates length of sentence with queryWord based on periods
+    def getLength(self):
+        startIndex = 0
+        endIndex = 0
+        index = 0
+        inSentence = False
+        for token in self.tokens:
+            if token['word'] == self.queryWord:
+                inSentence = True
+            if token['word'] == ".":
+                if not inSentence:
+                    startIndex = index
+                else:
+                    endIndex = index
+                    break
+            if token['pos'] != 'Punct':
+                index += 1
+        if endIndex == 0:
+            endIndex = index
+        return endIndex - startIndex
 
     # Return bigrams
     def bigrams(self):
@@ -252,12 +271,19 @@ class Corpora:
         prevPos             = []
         nextPos             = []
 
+        sentenceLengths     = {}
+
 
         # Concat sentences nearby datas
         for sent in sents:
 
             nearbyData      = sent.nearbyData()
             year            = nearbyData['year']
+
+            if year not in sentenceLengths.keys():
+                sentenceLengths[year] = [sent.getLength(), 1]
+            else:
+                sentenceLengths[year] = [sentenceLengths[year][0] + sent.getLength(), sentenceLengths[year][1] + 1]
 
             # Get words
             words           = nearbyData['words']
@@ -285,6 +311,9 @@ class Corpora:
         prevPosFreqDist     = self.arr2freqDist(prevPos)
         nextPosFreqDist     = self.arr2freqDist(nextPos)
 
+        for i in sentenceLengths:
+            sentenceLengths[i] = int(sentenceLengths[i][0] / sentenceLengths[i][1])
+
         # Sum similar co-occurrences together
         res                 = { 
             'results': {
@@ -308,7 +337,7 @@ class Corpora:
                 }
             }
         }
-        return res, None
+        return res, sentenceLengths, None
 
 
     @staticmethod
